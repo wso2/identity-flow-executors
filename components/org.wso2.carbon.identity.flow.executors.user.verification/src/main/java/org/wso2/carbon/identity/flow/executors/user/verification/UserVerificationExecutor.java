@@ -35,12 +35,14 @@ import org.wso2.carbon.identity.flow.execution.engine.Constants;
 import org.wso2.carbon.identity.flow.execution.engine.exception.FlowEngineClientException;
 import org.wso2.carbon.identity.flow.execution.engine.exception.FlowEngineServerException;
 import org.wso2.carbon.identity.flow.execution.engine.graph.Executor;
+import org.wso2.carbon.identity.flow.execution.engine.metadata.FlowExecutorMetadata;
 import org.wso2.carbon.identity.flow.execution.engine.model.ExecutorResponse;
 import org.wso2.carbon.identity.flow.execution.engine.model.FlowExecutionContext;
 import org.wso2.carbon.identity.flow.execution.engine.model.FlowUser;
 import org.wso2.carbon.identity.flow.executors.user.verification.internal.UserVerificationDataHolder;
 import org.wso2.carbon.identity.flow.executors.user.verification.validator.IDTokenValidator;
 import org.wso2.carbon.identity.flow.executors.user.verification.validator.UserVerificationTokenValidator;
+import org.wso2.carbon.identity.flow.mgt.Constants.FlowTypes;
 import org.wso2.carbon.identity.handler.event.account.lock.exception.AccountDisableServiceException;
 import org.wso2.carbon.identity.handler.event.account.lock.exception.AccountLockServiceException;
 import org.wso2.carbon.user.api.UserStoreException;
@@ -49,9 +51,11 @@ import org.wso2.carbon.user.api.UserStoreManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.wso2.carbon.identity.application.authentication.framework.util.FrameworkConstants.ResidentIdpPropertyName.ACCOUNT_DISABLE_HANDLER_ENABLE_PROPERTY;
@@ -153,22 +157,21 @@ public class UserVerificationExecutor implements Executor {
         return null;
     }
 
-    // Enable with the new flow type.
-    // @Override
-    // public Set<FlowTypes> getSupportedFlowTypes() {
-    //
-    //     return EnumSet.of(FlowTypes.<NEW_FLOW_TYPE>);
-    // }
-    //
-    // @Override
-    // public FlowExecutorMetadata getExecutorMetadata() {
-    //
-    //     return FlowExecutorMetadata.builder()
-    //             .displayName("User Verification")
-    //             .description("Verify user identity from a token.")
-    //             .icon("assets/images/icons/ticket-check.svg")
-    //             .build();
-    // }
+    @Override
+    public Set<FlowTypes> getSupportedFlowTypes() {
+
+        return EnumSet.of(FlowTypes.PROFILE_UPDATE);
+    }
+
+    @Override
+    public FlowExecutorMetadata getExecutorMetadata() {
+
+        return FlowExecutorMetadata.builder()
+                .displayName("User Verification")
+                .description("Verify user identity from a token.")
+                .icon("assets/images/icons/ticket-check.svg")
+                .build();
+    }
 
     /**
      * Check whether the user account is locked.
