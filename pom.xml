@@ -31,6 +31,8 @@
     <name>WSO2 Carbon Extension - Flow Executors Pom</name>
     <url>http://wso2.org</url>
     <modules>
+        <module>components/org.wso2.carbon.identity.flow.executors.common</module>
+        <module>components/org.wso2.carbon.identity.flow.executors</module>
         <module>components/org.wso2.carbon.identity.flow.executors.user.verification</module>
         <module>features/org.wso2.carbon.identity.flow.executors.server.feature</module>
     </modules>
@@ -129,6 +131,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.identity.flow.executors</groupId>
                 <artifactId>org.wso2.carbon.identity.flow.executors.common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.flow.executors</groupId>
+                <artifactId>org.wso2.carbon.identity.flow.executors</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
