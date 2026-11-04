@@ -33,6 +33,7 @@
     <modules>
         <module>components/org.wso2.carbon.identity.flow.executors.common</module>
         <module>components/org.wso2.carbon.identity.flow.executors</module>
+        <module>components/org.wso2.carbon.identity.flow.executors.user.verification</module>
         <module>features/org.wso2.carbon.identity.flow.executors.server.feature</module>
     </modules>
 
@@ -57,9 +58,71 @@
                 <version>${carbon.identity.framework.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.application.authentication.framework</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.claim.metadata.mgt</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.application.common</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.organization.management.core</groupId>
+                <artifactId>org.wso2.carbon.identity.organization.management.service</artifactId>
+                <version>${carbon.identity.organization.management.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.core</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.testutil</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.framework</groupId>
+                <artifactId>org.wso2.carbon.identity.input.validation.mgt</artifactId>
+                <version>${carbon.identity.framework.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.event.handler.accountlock</groupId>
+                <artifactId>org.wso2.carbon.identity.handler.event.account.lock</artifactId>
+                <version>${carbon.identity.account.lock.handler.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.oauth2</groupId>
+                <artifactId>org.wso2.carbon.identity.oauth</artifactId>
+                <version>${carbon.identity.oauth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.identity.inbound.auth.oauth2</groupId>
+                <artifactId>org.wso2.carbon.identity.oauth.common</artifactId>
+                <version>${carbon.identity.oauth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon</groupId>
+                <artifactId>org.wso2.carbon.user.core</artifactId>
+                <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.wso2.carbon</groupId>
                 <artifactId>org.wso2.carbon.core</artifactId>
                 <version>${carbon.kernel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.orbit.com.nimbusds</groupId>
+                <artifactId>nimbus-jose-jwt</artifactId>
+                <version>${nimbusds.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-lang.wso2</groupId>
@@ -82,9 +145,20 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.wso2.carbon.identity.flow.executors</groupId>
+                <artifactId>org.wso2.carbon.identity.flow.executors.user.verification</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${org.mockito.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -147,14 +221,27 @@
 
     <properties>
         <carbon.identity.framework.version>7.11.195</carbon.identity.framework.version>
+        <carbon.identity.oauth.version>7.5.89</carbon.identity.oauth.version>
+        <carbon.identity.organization.management.core.version>1.5.5</carbon.identity.organization.management.core.version>
         <carbon.kernel.version>4.10.99</carbon.kernel.version>
+        <carbon.identity.account.lock.handler.version>1.8.13</carbon.identity.account.lock.handler.version>
+        <nimbusds.version>10.3.0.wso2v1</nimbusds.version>
         <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
         <apache.felix.scr.ds.annotations.version>1.2.4</apache.felix.scr.ds.annotations.version>
         <testng.version>7.10.1</testng.version>
+        <org.mockito.version>5.3.1</org.mockito.version>
 
         <carbon.identity.package.import.version.range>[5.0.0, 8.0.0)</carbon.identity.package.import.version.range>
+        <carbon.identity.oauth.package.import.version.range>[6.0.0, 8.0.0)</carbon.identity.oauth.package.import.version.range>
+        <carbon.identity.organization.management.core.version.range>[1.0.0, 2.0.0)
+        </carbon.identity.organization.management.core.version.range>
+        <carbon.identity.account.lock.handler.imp.pkg.version.range>[1.8.13, 2.0.0)
+        </carbon.identity.account.lock.handler.imp.pkg.version.range>
+        <carbon.kernel.package.import.version.range>[4.9.0, 5.0.0)</carbon.kernel.package.import.version.range>
+        <carbon.user.api.imp.pkg.version.range>[1.0.1, 2.0.0)</carbon.user.api.imp.pkg.version.range>
         <commons-lang.wso2.osgi.version.range>[2.6.0,3.0.0)</commons-lang.wso2.osgi.version.range>
         <commons-logging.osgi.version.range>[1.2,2.0)</commons-logging.osgi.version.range>
+        <nimbusds.osgi.version.range>[10.3.0,11.0.0)</nimbusds.osgi.version.range>
         <osgi.framework.imp.pkg.version.range>[1.7.0, 2.0.0)</osgi.framework.imp.pkg.version.range>
         <imp.package.version.osgi.service>[1.2.0,2.0.0)</imp.package.version.osgi.service>
         <flow.executors.common.imp.pkg.version.range>[1.0.0, 2.0.0)</flow.executors.common.imp.pkg.version.range>
