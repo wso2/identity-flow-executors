@@ -36,6 +36,7 @@ import org.wso2.carbon.identity.flow.execution.engine.model.ExecutorResponse;
 import org.wso2.carbon.identity.flow.execution.engine.model.FlowExecutionContext;
 import org.wso2.carbon.identity.flow.executors.user.verification.internal.UserVerificationDataHolder;
 import org.wso2.carbon.identity.flow.executors.user.verification.validator.UserVerificationTokenValidator;
+import org.wso2.carbon.identity.flow.mgt.Constants.FlowTypes;
 import org.wso2.carbon.identity.flow.mgt.model.ExecutorDTO;
 import org.wso2.carbon.identity.flow.mgt.model.NodeConfig;
 import org.wso2.carbon.identity.handler.event.account.lock.exception.AccountLockServiceException;
@@ -48,6 +49,7 @@ import org.wso2.carbon.user.core.service.RealmService;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -166,6 +168,12 @@ public class UserVerificationExecutorTest {
     public void testRollback() {
 
         assertNull(executor.rollback(context));
+    }
+
+    @Test
+    public void testGetSupportedFlowTypes() {
+
+        assertEquals(executor.getSupportedFlowTypes(), EnumSet.of(FlowTypes.PROFILE_UPDATE));
     }
 
     @Test

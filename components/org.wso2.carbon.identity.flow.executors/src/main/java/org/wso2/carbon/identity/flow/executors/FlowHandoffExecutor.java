@@ -22,13 +22,17 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.flow.execution.engine.graph.Executor;
+import org.wso2.carbon.identity.flow.execution.engine.metadata.FlowExecutorMetadata;
 import org.wso2.carbon.identity.flow.execution.engine.model.ExecutorResponse;
 import org.wso2.carbon.identity.flow.execution.engine.model.FlowExecutionContext;
+import org.wso2.carbon.identity.flow.mgt.Constants.FlowTypes;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -82,22 +86,21 @@ public class FlowHandoffExecutor implements Executor {
         return null;
     }
 
-    // Enable with the new flow type.
-    // @Override
-    // public Set<FlowTypes> getSupportedFlowTypes() {
-    //
-    //     return EnumSet.of(FlowTypes.<NEW_FLOW_TYPE>);
-    // }
-    //
-    // @Override
-    // public FlowExecutorMetadata getExecutorMetadata() {
-    //
-    //     return FlowExecutorMetadata.builder()
-    //             .displayName("Flow Handoff")
-    //             .description("Issue one-time link to hand off flow.")
-    //             .icon("assets/images/icons/arrow-up-right.svg")
-    //             .build();
-    // }
+    @Override
+    public Set<FlowTypes> getSupportedFlowTypes() {
+
+        return EnumSet.of(FlowTypes.PROFILE_UPDATE);
+    }
+
+    @Override
+    public FlowExecutorMetadata getExecutorMetadata() {
+
+        return FlowExecutorMetadata.builder()
+                .displayName("Continue Elsewhere")
+                .description("Continue flow at another destination.")
+                .icon("assets/images/icons/external-link.svg")
+                .build();
+    }
 
     private ExecutorResponse issueHandoff(FlowExecutionContext context, ExecutorResponse response) {
 
