@@ -96,9 +96,9 @@ public class FlowHandoffExecutor implements Executor {
     public FlowExecutorMetadata getExecutorMetadata() {
 
         return FlowExecutorMetadata.builder()
-                .displayName("Flow Handoff")
-                .description("Issue one-time link to hand off flow.")
-                .icon("assets/images/icons/arrow-up-right.svg")
+                .displayName("Continue Elsewhere")
+                .description("Continue flow at another destination.")
+                .icon("assets/images/icons/external-link.svg")
                 .build();
     }
 

@@ -167,8 +167,8 @@ public class UserVerificationExecutor implements Executor {
     public FlowExecutorMetadata getExecutorMetadata() {
 
         return FlowExecutorMetadata.builder()
-                .displayName("User Verification")
-                .description("Verify user identity from a token.")
+                .displayName("Verify Signed-in User")
+                .description("Identify the user from a pre-issued token.")
                 .icon("assets/images/icons/ticket-check.svg")
                 .build();
     }
