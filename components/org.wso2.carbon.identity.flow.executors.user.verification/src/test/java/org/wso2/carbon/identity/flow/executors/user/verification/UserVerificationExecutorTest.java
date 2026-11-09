@@ -227,6 +227,7 @@ public class UserVerificationExecutorTest {
         assertEquals(response.getResult(), STATUS_COMPLETE);
         assertEquals(context.getFlowUser().getUserId(), USER_ID);
         assertEquals(context.getFlowUser().getUsername(), USER_NAME);
+        assertEquals(context.getFlowUser().getUserStoreDomain(), USER_STORE_DOMAIN);
         assertEquals(context.getFlowUser().getClaim(EMAIL_CLAIM), "john@wso2.com");
         assertNull(context.getProperty(TOKEN));
         verify(tokenValidator).validateAndGetUser(TOKEN_VALUE, context,
