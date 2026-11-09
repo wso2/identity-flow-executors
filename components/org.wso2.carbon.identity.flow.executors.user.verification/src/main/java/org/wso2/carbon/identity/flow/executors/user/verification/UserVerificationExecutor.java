@@ -212,7 +212,7 @@ public class UserVerificationExecutor implements Executor {
     }
 
     /**
-     * Set up the flow user with the console profile claims, user ID and username.
+     * Set up the flow user with the console profile claims, user ID, username and user store domain.
      */
     private void setupFlowUser(FlowExecutionContext context, AuthenticatedUser user, String tenantDomain)
             throws UserStoreException {
@@ -239,6 +239,7 @@ public class UserVerificationExecutor implements Executor {
             flowUser.addClaims(claimsMap);
             flowUser.setUserId(user.getUserId());
             flowUser.setUsername(domainQualifiedName);
+            flowUser.setUserStoreDomain(user.getUserStoreDomain());
         } catch (ClaimMetadataException | UserIdNotFoundException e) {
             throw new UserStoreException("Error while retrieving or setting user claims", e);
         }
