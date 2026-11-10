@@ -26,7 +26,7 @@
     </parent>
     <groupId>org.wso2.carbon.identity.flow.executors</groupId>
     <artifactId>identity-flow-executors</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>pom</packaging>
     <name>WSO2 Carbon Extension - Flow Executors Pom</name>
     <url>http://wso2.org</url>
@@ -42,7 +42,7 @@
         <url>https://github.com/wso2/identity-flow-executors.git</url>
         <developerConnection>scm:git:https://github.com/wso2/identity-flow-executors.git
         </developerConnection>
-        <tag>HEAD</tag>
+        <tag>v1.0.1</tag>
     </scm>
 
     <dependencyManagement>
