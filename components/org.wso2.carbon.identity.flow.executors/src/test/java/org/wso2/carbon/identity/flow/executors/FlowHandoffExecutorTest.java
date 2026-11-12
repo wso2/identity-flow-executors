@@ -92,7 +92,8 @@ public class FlowHandoffExecutorTest {
     @Test
     public void testGetSupportedFlowTypes() {
 
-        assertEquals(executor.getSupportedFlowTypes(), EnumSet.of(FlowTypes.PROFILE_UPDATE));
+        assertEquals(executor.getSupportedFlowTypes(),
+                EnumSet.of(FlowTypes.PROFILE_UPDATE, FlowTypes.DEVICE_REGISTRATION));
     }
 
     @Test

@@ -89,7 +89,7 @@ public class FlowHandoffExecutor implements Executor {
     @Override
     public Set<FlowTypes> getSupportedFlowTypes() {
 
-        return EnumSet.of(FlowTypes.PROFILE_UPDATE);
+        return EnumSet.of(FlowTypes.PROFILE_UPDATE, FlowTypes.DEVICE_REGISTRATION);
     }
 
     @Override
