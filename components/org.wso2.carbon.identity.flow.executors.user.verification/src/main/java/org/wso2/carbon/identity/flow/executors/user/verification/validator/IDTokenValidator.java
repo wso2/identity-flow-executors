@@ -56,6 +56,9 @@ import static org.wso2.carbon.identity.flow.execution.engine.Constants.ErrorMess
 import static org.wso2.carbon.identity.flow.execution.engine.Constants.ErrorMessages.ERROR_CODE_FLOW_FAILURE;
 import static org.wso2.carbon.identity.flow.execution.engine.util.FlowExecutionEngineUtils.handleClientException;
 import static org.wso2.carbon.identity.flow.execution.engine.util.FlowExecutionEngineUtils.handleServerException;
+import static org.wso2.carbon.identity.flow.executors.common.util.FlowExecutorUtils.getMetadataValue;
+import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.ALLOW_MY_ACCOUNT_METADATA_KEY;
+import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.MY_ACCOUNT_CLIENT_ID;
 import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.TokenTypes.ID_TOKEN_TYPE;
 import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.USER_VERIFICATION_AUDIENCE;
 
@@ -83,7 +86,7 @@ public class IDTokenValidator implements UserVerificationTokenValidator {
             JWTClaimsSet claimsSet = getClaimsSet(signedJWT);
             validateMandatoryClaims(claimsSet);
             String clientId = getClientId(claimsSet);
-            validateAudience(claimsSet, clientId);
+            validateAudience(claimsSet, clientId, context);
 
             OAuthAppDO oAuthAppDO = getOAuthApp(clientId, tenantDomain);
             String appTenantDomain = OAuth2Util.getTenantDomainOfOauthApp(oAuthAppDO);
@@ -195,19 +198,34 @@ public class IDTokenValidator implements UserVerificationTokenValidator {
     }
 
     /**
-     * Validate that the audience contains the client ID and the user verification audience.
+     * Validate that the audience contains the client ID and the user verification audience. The user verification
+     * audience is not required for My Account when the step allows My Account.
      */
-    private void validateAudience(JWTClaimsSet claimsSet, String clientId)
+    private void validateAudience(JWTClaimsSet claimsSet, String clientId, FlowExecutionContext context)
             throws IDTokenValidationFailureException, FlowEngineClientException {
 
         List<String> audience = claimsSet.getAudience();
         if (!audience.contains(clientId)) {
             throw new IDTokenValidationFailureException("ID token audience does not contain the client ID.");
         }
+        if (isAllowedMyAccount(clientId, context)) {
+            LOG.debug("The step allows My Account. Skipping the user verification audience validation.");
+            return;
+        }
         if (!audience.contains(USER_VERIFICATION_AUDIENCE)) {
             LOG.debug("ID token audience does not contain the user verification audience.");
             throw handleClientException(ERROR_CODE_FLOW_FAILURE, "Invalid audience values provided.");
         }
+    }
+
+    /**
+     * Check whether the client is My Account and the step allows My Account. My Account is allowed unless the step
+     * disables it.
+     */
+    private boolean isAllowedMyAccount(String clientId, FlowExecutionContext context) {
+
+        return MY_ACCOUNT_CLIENT_ID.equals(clientId)
+                && !Boolean.FALSE.toString().equalsIgnoreCase(getMetadataValue(context, ALLOW_MY_ACCOUNT_METADATA_KEY));
     }
 
     /**
