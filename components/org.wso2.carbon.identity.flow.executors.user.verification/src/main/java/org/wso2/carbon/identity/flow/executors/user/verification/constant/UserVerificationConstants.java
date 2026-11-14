@@ -27,6 +27,8 @@ public class UserVerificationConstants {
     public static final String TOKEN = "token";
     public static final String TOKEN_TYPE = "tokenType";
     public static final String USER_VERIFICATION_AUDIENCE = "urn:wso2:identity:flow:user-verification";
+    public static final String MY_ACCOUNT_CLIENT_ID = "MY_ACCOUNT";
+    public static final String ALLOW_MY_ACCOUNT_METADATA_KEY = "allowMyAccount";
     public static final String TOKEN_VALIDITY_PERIOD_METADATA_KEY = "tokenValidityPeriod";
     public static final long DEFAULT_TOKEN_VALIDITY_PERIOD_MINUTES = 5;
 

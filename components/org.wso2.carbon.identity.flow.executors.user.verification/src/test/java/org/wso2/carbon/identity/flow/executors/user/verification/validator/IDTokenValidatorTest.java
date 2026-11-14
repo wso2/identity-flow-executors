@@ -38,6 +38,8 @@ import org.wso2.carbon.identity.flow.execution.engine.exception.FlowEngineClient
 import org.wso2.carbon.identity.flow.execution.engine.exception.FlowEngineServerException;
 import org.wso2.carbon.identity.flow.execution.engine.model.FlowExecutionContext;
 import org.wso2.carbon.identity.flow.executors.user.verification.internal.UserVerificationDataHolder;
+import org.wso2.carbon.identity.flow.mgt.model.ExecutorDTO;
+import org.wso2.carbon.identity.flow.mgt.model.NodeConfig;
 import org.wso2.carbon.identity.oauth.common.OAuthConstants;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
 import org.wso2.carbon.identity.oauth.config.OAuthServerConfiguration;
@@ -52,6 +54,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.cert.Certificate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -65,9 +68,11 @@ import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.expectThrows;
 import static org.wso2.carbon.identity.core.util.IdentityCoreConstants.TENANT_NAME_FROM_CONTEXT;
 import static org.wso2.carbon.identity.flow.execution.engine.Constants.ErrorMessages.ERROR_CODE_FLOW_FAILURE;
+import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.ALLOW_MY_ACCOUNT_METADATA_KEY;
 import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.DEFAULT_TOKEN_VALIDITY_PERIOD_MINUTES;
 import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.TokenTypes.ID_TOKEN_TYPE;
 import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.USER_VERIFICATION_AUDIENCE;
+import static org.wso2.carbon.identity.flow.executors.user.verification.constant.UserVerificationConstants.USER_VERIFICATION_EXECUTOR;
 
 /**
  * Test class for IDTokenValidator.
@@ -89,6 +94,7 @@ public class IDTokenValidatorTest {
     private static final String ORG_ISSUER = "https://localhost:9443/t/carbon.super/o/" + ORG_ID + "/oauth2/token";
     private static final String MTLS_ISSUER = "https://mtls.localhost:9443/oauth2/token";
     private static final String MUTUAL_TLS_ALIASES_ENABLED = "OAuth.MutualTLSAliases.Enabled";
+    private static final String MY_ACCOUNT_CLIENT_ID = "MY_ACCOUNT";
     private static final long TOKEN_VALIDITY_PERIOD_SECONDS =
             TimeUnit.MINUTES.toSeconds(DEFAULT_TOKEN_VALIDITY_PERIOD_MINUTES);
     private static final String USER_NOT_FOUND_MESSAGE = "The user could not be resolved.";
@@ -238,6 +244,46 @@ public class IDTokenValidatorTest {
     public void testAudienceWithoutUserVerificationAudience() throws Exception {
 
         assertClientError(buildToken(builder -> builder.audience(Arrays.asList(CLIENT_ID, ISSUER))),
+                "Invalid audience values provided.");
+    }
+
+    @Test
+    public void testMyAccountWithoutUserVerificationAudience() throws Exception {
+
+        setUpMyAccount();
+        assertEquals(validate(buildMyAccountToken()).getUserId(), USER_ID);
+    }
+
+    @DataProvider
+    public Object[][] allowMyAccountData() {
+
+        return new Object[][]{
+                {"true", true},
+                {"false", false},
+                {"FALSE", false}
+        };
+    }
+
+    @Test(dataProvider = "allowMyAccountData")
+    public void testMyAccountWithoutUserVerificationAudienceByStep(String allowMyAccount, boolean allowed)
+            throws Exception {
+
+        setUpMyAccount();
+        ExecutorDTO executorDTO = new ExecutorDTO(USER_VERIFICATION_EXECUTOR);
+        executorDTO.addMetadata(ALLOW_MY_ACCOUNT_METADATA_KEY, allowMyAccount);
+        context.setCurrentNode(new NodeConfig.Builder().id("userVerification").executorConfig(executorDTO).build());
+
+        if (allowed) {
+            assertEquals(validate(buildMyAccountToken()).getUserId(), USER_ID);
+        } else {
+            assertClientError(buildMyAccountToken(), "Invalid audience values provided.");
+        }
+    }
+
+    @Test
+    public void testOtherClientWithoutUserVerificationAudience() throws Exception {
+
+        assertClientError(buildToken(builder -> builder.audience(Collections.singletonList(CLIENT_ID))),
                 "Invalid audience values provided.");
     }
 
@@ -454,6 +500,22 @@ public class IDTokenValidatorTest {
         oAuth2Util.when(() -> OAuth2Util.getIdTokenIssuer(TENANT_DOMAIN, CLIENT_ID, false)).thenReturn(ORG_ISSUER);
         Certificate certificate = buildCertificate(certificateKeyPair);
         oAuth2Util.when(() -> OAuth2Util.getCertificate(ORG_TENANT_DOMAIN)).thenReturn(certificate);
+    }
+
+    private void setUpMyAccount() {
+
+        oAuth2Util.when(() -> OAuth2Util.getAppInformationFromOrgHierarchy(MY_ACCOUNT_CLIENT_ID, ROOT_ORG_ID))
+                .thenReturn(oAuthAppDO);
+        oAuth2Util.when(() -> OAuth2Util.getIdTokenIssuer(TENANT_DOMAIN, MY_ACCOUNT_CLIENT_ID, false))
+                .thenReturn(ISSUER);
+        oAuth2Util.when(() -> OAuth2Util.getAuthenticatedUserFromSubjectIdentifier(SUBJECT, TENANT_DOMAIN,
+                MY_ACCOUNT_CLIENT_ID)).thenReturn(buildUser());
+    }
+
+    private String buildMyAccountToken() throws Exception {
+
+        return buildToken(builder -> builder.audience(Collections.singletonList(MY_ACCOUNT_CLIENT_ID))
+                .claim(OAuthConstants.OIDCClaims.AZP, MY_ACCOUNT_CLIENT_ID));
     }
 
     private AuthenticatedUser validate(String token) throws Exception {
